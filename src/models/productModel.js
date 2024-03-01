@@ -3,7 +3,7 @@ const pgp = require('pg-promise')({ capSQL: true });
 
 module.exports = class ProductModel {
 
-    async Find(options={}) {
+    async find(options={}) {
         try{
 
             const statement = `SELECT *
@@ -17,6 +17,7 @@ module.exports = class ProductModel {
               }
         
               return [];
+              
         } catch(err) {
             throw err;
         }

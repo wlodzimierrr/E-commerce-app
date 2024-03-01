@@ -13,7 +13,7 @@ module.exports = (app) => {
         try {
             const queryParams = req.query;
 
-            const response = await ProductServiceInstance.get(queryParams);
+            const response = await ProductServiceInstance.list(queryParams);
             res.status(200). send(response);
         } catch(err) {
             next(err);
