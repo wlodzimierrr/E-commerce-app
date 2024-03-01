@@ -24,7 +24,7 @@ module.exports = (app, passport) => {
         try {
         const { username, password } = req.body;
         const { user, token } = await AuthServiceInstance.login({ email: username, password });
-    
+        
         res.status(200).send({ user, token });
         } catch (err) {
         next(err);

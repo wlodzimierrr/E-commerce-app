@@ -11,9 +11,16 @@ module.exports = async (app) => {
     await routeLoader(app, passport);
 
     app.use((err, req, res, next) => {
+      console.error(err); // Always log the error
+
+      if (!res.headersSent) {
+          const statusCode = err.statusCode || err.status || 500; // Fallback to 500
+          res.status(statusCode).json({
+              message: err.message || 'An unexpected error occurred',
+          });
+      }
+  });
   
-      const { message, status } = err;
-    
-      return res.status(status).send({ message });
-    });
+  
+
   }
