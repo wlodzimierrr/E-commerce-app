@@ -1,6 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
+const bcrypt = require('bcrypt');
 const UserModel = require('../models/userModel');
 const UserModelInstance = new UserModel()
 
@@ -32,14 +33,15 @@ module.exports = class AuthService {
             if (!user) {
                 throw createError(401, 'Incorrect username or password');
             }
-    
-            if (user.password !== password){
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
                 throw createError(401, 'Incorrect username or password')
             }
             
             const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
             return { user, token };
-            
+
         } catch(err) {
             throw createError(500, err);
         }
