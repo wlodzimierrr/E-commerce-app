@@ -1,24 +1,24 @@
 const db = require('../db');
 const pgp = require('pg-promise')({ capSQL: true });
+const moment = require('moment');
 
-module.exports = class cartModel {
+module.exports = class CartModel {
 
     constructor(data = {}) {
 
         this.created_at = data.created_at || moment.utc().toISOString();
         this.updated_at = moment.utc().toISOString();
-        this.converted = data.converted || null;
-        this.isActive = data.isActive || true;
+        // this.converted = data.converted || null;
+        // this.isActive = data.isActive || true;
       }
 
-    async create(userId) {
+    async create(user_id) {
         try {
         
-            const data = { userId, ...this}    
+            const data = { user_id, ...this}    
             const newCart = new this.constructor(data);
-            const dataWithTimestamps = { ...data, created_at: newCart.created_at };
-      
-            const statement = pgp.helpers.insert(dataWithTimestamps, null, 'users') + ' RETURNING *';
+            const dataWithTimestamps = { ...data, created_at: newCart.created_at};
+            const statement = pgp.helpers.insert( dataWithTimestamps, null, 'carts') + ' RETURNING *';
             const result = await db.query(statement);
       
             if (result.rows?.length) {
@@ -31,13 +31,13 @@ module.exports = class cartModel {
         }
       }
 
-    async findOneByUser(userId) {
+    static async findOneByUser(user_id) {
         try{
 
             const statement = `SELECT *
                                FROM carts
-                               WHERE "userId" = $1`;
-            const values = [userId];
+                               WHERE "user_id" = $1`;
+            const values = [user_id];
 
             const result = await db.query(statement, values);
             if (result.rows?.length) {
@@ -51,7 +51,7 @@ module.exports = class cartModel {
         }
     }
 
-    async findOneById(id) {
+    static async findOneById(id) {
         try{
 
             const statement = `SELECT *

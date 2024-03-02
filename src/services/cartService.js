@@ -1,18 +1,18 @@
 const createError = require('http-errors');
-const CartModel = require('../models/cart');
-const CartItemModel = require('../models/cartItem');
+const CartModel = require('../models/cartModel');
+const CartItemModel = require('../models/cartItemModel');
 
 
 module.exports = class CartService {
 
     async create(data) {
 
-        const { userId } = data;
+        const { user_id } = data;
 
         try{
 
             const Cart = new CartModel();
-            const cart = Cart.create(userId);
+            const cart = await Cart.create(user_id);
 
             return cart;
         } catch (err) {
@@ -20,14 +20,14 @@ module.exports = class CartService {
         }
     };
 
-    async loadCart(userId) {
+    async loadCart(user_id) {
 
         try{
 
-            const  cart = await CartModel.findOneByUser(userId);
-
-            const items = CartItemModel.find(cart.id);
+            const  cart = await CartModel.findOneByUser(user_id);
+            const items = await CartItemModel.find(cart.cartid);
             cart.items = items;
+
 
             return cart;
         } catch(err) {
@@ -35,28 +35,54 @@ module.exports = class CartService {
         }
     }
 
-    async addItems(userId, item) {
+    async addItems(user_id, item) {
+        try {
+            
+            const { products: { id: product_id, quantity } } = item;
+    
+            const cart = await CartModel.findOneByUser(user_id);
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+    
+            const cartItem = await CartItemModel.create({ 
+                cart_id: cart.id, 
+                product_id, 
+                quantity 
+            });
+    
+            return cartItem;
+        } catch(err) {
+            console.error('Error adding item to cart:', err);
+            throw err; 
+        }
+    }
+    
 
+    async updateItem(id, data) {
+        
         try{
-
-            const cart = CartModel.findOneByUser(userId);
-
-            const cartItem = CartItemModel.create({ cartId: cart.id, ...item });
-
+            const cartItem = await CartItemModel.update(id, data)
+        
             return cartItem;
         } catch(err) {
             throw err;
         }
     }
 
-    async updateItem(cartItemId, data) {
-        
+    async removeItem(id) {
+
         try{
-            const cartItem = CartItemModel.update(cartItemId, id)
+            const cartItem = await CartItemModel.delete(id)
 
             return cartItem;
+            
         } catch(err) {
             throw err;
         }
+    }
+
+    async checkout(cart_id, user_id, paymentInfo) {
+        
     }
 }

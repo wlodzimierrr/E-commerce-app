@@ -1,5 +1,6 @@
 const db = require('../db');
 const pgp = require('pg-promise')({ capSQL: true });
+const moment = require('moment');
 
 module.exports = class CartItemModel {
 
@@ -10,13 +11,11 @@ module.exports = class CartItemModel {
       }
 
       static async create(data) {
-
         try {
-           
-            const newCartItem = new this.constructor(data);
+
             const dataWithTimestamps = { ...data, created_at: newCartItem.created_at };
        
-            const statement = pgp.helpers.insert(dataWithTimestamps, null, 'cartItems') + ' RETURNING *';
+            const statement = pgp.helpers.insert(dataWithTimestamps, null, 'cart_items') + ' RETURNING *';
             const result = await db.query(statement);
        
             if (result.rows?.length) {
@@ -33,9 +32,8 @@ module.exports = class CartItemModel {
 
         try{
             const updateCartItemData = { ...data, updated_at: moment.utc().toISOString() };
-            const {id, ...params} = updateCartItemData;
-            const condition = pgp.as.format(`WHERE ${id} RETURNING *`, { id });
-            const statement = pgp.helpers.update(params, null, 'cartItems') + condition;
+            const condition = pgp.as.format('WHERE id = ${id} RETURNING *', { id });
+            const statement = pgp.helpers.update(updateCartItemData, null, 'cart_items') + condition;
 
             const result = await db.query(statement);
 
@@ -55,14 +53,15 @@ module.exports = class CartItemModel {
         try{
 
             const statement = `SELECT 
-                                    ci.qty,
-                                    ci.id AS "cartItemId", 
+                                    ci.quantity,  
+                                    ci.id AS "id", 
                                     p.*
-                                FROM "cartItems" ci
-                                INNER JOIN products p ON p.id = ci."productId"
-                                WHERE "cartId" = $1`
-            const values = [cartId]
+                                FROM "cart_items" ci
+                                INNER JOIN products p ON p.id = ci.product_id  
+                                WHERE ci.cart_id = $1`;  
 
+
+            const values = [cartId]
             const result = await db.query(statement, values)
             
             if (result.rows?.length){
@@ -81,7 +80,7 @@ module.exports = class CartItemModel {
         try{
             
             const statement = `DELETE
-                               FROM "cartItems"
+                               FROM "cart_items"
                                WHERE id = $1
                                RETURNING *`;
             const values = [id];

@@ -22,13 +22,13 @@ module.exports = (app, passport) => {
     router.post('/login', passport.authenticate('local'), async (req, res, next) => {
 
         try {
-        const { username, password } = req.body;
-        const { user, token } = await AuthServiceInstance.login({ email: username, password });
-        
-        res.status(200).send({ user, token });
-        } catch (err) {
-        next(err);
-        }
+            const { username, password } = req.body;
+            const { user, token } = await AuthServiceInstance.login({ email: username, password });
+            
+            res.status(200).send({ user, token });
+            } catch (err) {
+            next(err);
+            }
 
     });
     
