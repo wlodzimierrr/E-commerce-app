@@ -4,6 +4,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import App from './App';
 import './index.css';
+import rootReducer from './store/rootReducers';
+import reportWebVitals from './reportWebVitals';
 
 // Initializes redux store
 const store = configureStore({

@@ -31,5 +31,22 @@ module.exports = (app, passport) => {
             }
 
     });
+
+    router.get('/logged_in', async (req, res, next) => {
+        try {
+          const { user_id } = req.user;
+        
+          const cart = await CartServiceInstance.loadCart(user_id);
+          const user = await UserServiceInstance.get({ user_id });
+        
+          res.status(200).send({
+            cart,
+            loggedIn: true,
+            user
+          });
+        } catch(err) {
+          next(err);
+        }
+      });
+}
     
-  }
