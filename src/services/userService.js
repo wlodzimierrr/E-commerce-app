@@ -4,11 +4,11 @@ const UserModelInstance = new UserModel();
 
 module.exports = class UserServices {
     
-    async get(date) {
+    async get(data) {
 
-        const { id } = data;
+        const { user_id } = data;
         try {
-            const user = await UserModelInstance.findOnebyId(id)
+            const user = await UserModelInstance.findOneById(user_id)
 
             if(!user) {
                 throw createError(404, 'User record not found');

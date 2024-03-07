@@ -44,8 +44,8 @@ module.exports = class UserModel {
              }
           
              const updatedData = { ...data, updated_at: moment.utc().toISOString() };
-             const { id, ...params } = updatedData;
-             const condition = pgp.as.format('WHERE id = ${id} RETURNING *', { id }); 
+             const { user_id, ...params } = updatedData;
+             const condition = pgp.as.format('WHERE user_id = ${user_id} RETURNING *', { user_id }); 
              const statement = pgp.helpers.update(params, null, 'users') + condition;
           
              const result = await db.query(statement);
@@ -81,13 +81,34 @@ module.exports = class UserModel {
         }
     }
 
-    async findOneById(id) {
+    async findOneById(user_id) {
+        try{
+            
+            const statement = `SELECT *
+                               FROM users
+                               WHERE user_id = $1`;
+            const values = [user_id];
+
+            const result = await db.query(statement, values);
+            if (result.rows?.length) {
+                return result.rows[0]
+            }
+          
+            return null;
+        
+        } catch(err) {
+            throw new Error(err);
+        }
+    }
+
+    
+    async findOneByUsername(username) {
         try{
 
             const statement = `SELECT *
                                FROM users
-                               WHERE email = $1`;
-            const values = [id];
+                               WHERE username = $1`;
+            const values = [username];
 
             const result = await db.query(statement, values);
             if (result.rows?.length) {
@@ -101,3 +122,4 @@ module.exports = class UserModel {
         }
     } 
 };
+
