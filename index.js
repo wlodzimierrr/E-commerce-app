@@ -1,11 +1,17 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const app = express();
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+const loaders = require('./src/loaders');
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+const { PORT } = require('./config');
+
+async function startServer() {
+  
+  loaders(app);
+  
+  app.listen(PORT, () => {
+    console.log(`Server listening on PORT ${PORT}`);
+  })
+}
+
+startServer();
