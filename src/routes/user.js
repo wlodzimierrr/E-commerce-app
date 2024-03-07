@@ -11,9 +11,9 @@ module.exports = (app) => {
     router.get('/:userId', async (req, res, next) => {
 
         try {
-            const {user_id} = req.params;
+            const {userId} = req.params;
 
-            const response = await UserServiceInstance.get({ id: user_id });
+            const response = await UserServiceInstance.get({ id: userId });
             res.status(200). send(response);
         } catch(err) {
             next(err);
@@ -22,10 +22,10 @@ module.exports = (app) => {
 
     router.put('/:userId', async (req, res, next) => {
         try{
-            const { user_id } = req.params;
+            const { userId } = req.params;
             const data = req.body;
 
-            const response = await UserServiceInstance.update( { id: user_id, ...data });
+            const response = await UserServiceInstance.update( { id: userId, ...data });
             res.status(200).send(response);
         } catch(err) {
             next(err);

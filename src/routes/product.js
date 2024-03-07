@@ -23,13 +23,24 @@ module.exports = (app) => {
     router.get('/:ProductId', async (req, res, next) => {
 
         try {
-            const { productId } = req.params;
-
-            const response = await ProductServiceInstance.get(productId);
+            const { ProductId } = req.params;
+            
+            const response = await ProductServiceInstance.get(ProductId);
             res.status(200). send(response);
         } catch(err) {
             next(err);
         }
     });
     
+    router.put('/:ProductId', async (req, res, next) => {
+        try{
+            const { ProductId } = req.params;
+            const { stock_quantity } = req.body;
+
+            const response = await ProductServiceInstance.update( { id: ProductId, stock_quantity });
+            res.status(200).send(response);
+        } catch(err) {
+            next(err);
+        }
+    });
 }

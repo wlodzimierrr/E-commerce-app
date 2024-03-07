@@ -13,7 +13,7 @@ module.exports = class CartItemModel {
       static async create(data) {
         try {
 
-            const dataWithTimestamps = { ...data, created_at: newCartItem.created_at };
+            const dataWithTimestamps = { ...data, created_at: moment.utc().toISOString() };
        
             const statement = pgp.helpers.insert(dataWithTimestamps, null, 'cart_items') + ' RETURNING *';
             const result = await db.query(statement);

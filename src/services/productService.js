@@ -31,4 +31,18 @@ module.exports = class ProductService {
             throw err;
         }
     };
+
+    async update(data) {
+
+        try{
+
+            const user = await ProductModelInstance.update(data);
+
+            return user;
+
+        } catch(err) {
+            throw err;
+        }
+
+    };
 }

@@ -8,7 +8,7 @@ module.exports = (app) => {
 
     app.use('/carts', router);
 
-    router.get ('/mycart', async (req, res, next) => {
+    router.get ('/cart', async (req, res, next) => {
 
         try{
             const { user_id } = req.body.users;
@@ -21,7 +21,7 @@ module.exports = (app) => {
           }
     });
 
-    router.put('/mycart', async (req, res, next) => {
+    router.put('/cart', async (req, res, next) => {
 
         try{
             const { user_id } = req.body.users;
@@ -36,7 +36,7 @@ module.exports = (app) => {
     });
 
     
-    router.post('/mycart', async (req, res, next) => {
+    router.post('/cart', async (req, res, next) => {
 
         try{
             const { user_id } = req.body.users;
@@ -49,7 +49,7 @@ module.exports = (app) => {
         }
     });
 
-    router.post('/mycart/items', async (req, res, next) => {
+    router.post('/cart/items', async (req, res, next) => {
 
         try {
              const { user_id } = req.body.users;
@@ -63,7 +63,7 @@ module.exports = (app) => {
         }
     });
 
-    router.put('/mycart/items/:cartItemId', async (req, res, next) => {
+    router.put('/cart/items/:cartItemId', async (req, res, next) => {
 
         try{
             const { cartItemId  } = req.params;
@@ -77,7 +77,7 @@ module.exports = (app) => {
         }
     });
 
-    router.delete('/mycart/items/:cartItemId', async (req, res, next) => {
+    router.delete('/cart/items/:cartItemId', async (req, res, next) => {
 
         try{
             const {cartItemId} = req.params;
@@ -88,9 +88,20 @@ module.exports = (app) => {
         } catch(err) {
           next(err);
         }
-    });``
+    });
 
-    router.post('/mycart/checkout', async (req, res, next) => {
-        
+    router.post('/cart/:cartId/checkout', async (req, res, next) => {
+
+        try {
+            const { user_id } = req.body.users;
+            const { cartId } = req.params
+            const { payment_info } = req.body; 
+            
+            const response = await CartServiceInstance.checkout(cartId, user_id, payment_info);
+      
+            res.status(200).send(response);
+          } catch(err) {
+            next(err);
+          }
       });
 };
