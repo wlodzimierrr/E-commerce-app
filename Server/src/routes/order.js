@@ -6,13 +6,13 @@ const OrderServiceInstance = new OrderService();
 
 module.exports = (app) => {
 
-    app.use('/orders', router);
+    app.use('/api/orders', router);
 
     router.get ('/', async (req, res, next) => {
 
         try {
-            const {user_id} = req.body.user;
-
+            
+            const { user_id } = req.query;
             const response = await OrderServiceInstance.list(user_id)
             res.status(200).send(response);
 

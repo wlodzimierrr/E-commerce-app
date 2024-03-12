@@ -1,24 +1,17 @@
 import React, { StrictMode } from 'react';
-import ReactDOM from 'react-dom';
-import { configureStore } from '@reduxjs/toolkit';
-import { Provider } from 'react-redux';
+import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
-import rootReducer from './store/rootReducers';
 import reportWebVitals from './reportWebVitals';
 
-// Initializes redux store
-const store = configureStore({
-  reducer: rootReducer
-});
 
-ReactDOM.render(
+
+// Use createRoot API for React 18
+const root = createRoot(document.getElementById('root'));
+root.render(
   <StrictMode>
-    <Provider store={store}>
       <App />
-    </Provider>
-  </StrictMode>,
-  document.getElementById('root')
+  </StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

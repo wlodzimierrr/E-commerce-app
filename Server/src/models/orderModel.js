@@ -68,7 +68,7 @@ module.exports = class OrderModel {
 
             const statement = `SELECT *
                               FROM orders
-                              WHERE "userId" = $1`;
+                              WHERE "user_id" = $1`;
             const values = [user_id];
 
             const result = await db.query(statement, values);

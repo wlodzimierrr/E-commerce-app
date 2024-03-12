@@ -24,7 +24,7 @@ module.exports = class ProductModel {
         }
     }
 
-    static async findOne(id) {
+    async findOne(id) {
         try{
 
             const statement = `SELECT *

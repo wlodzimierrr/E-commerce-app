@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const CartService = require('../services/CartService');
+const CartService = require('../services/cartService');
 
 const CartServiceInstance = new CartService();
 
 module.exports = (app) => {
 
-    app.use('/carts', router);
+    app.use('/api/carts', router);
 
     router.get ('/cart', async (req, res, next) => {
 
@@ -52,10 +52,10 @@ module.exports = (app) => {
     router.post('/cart/items', async (req, res, next) => {
 
         try {
-             const { user_id } = req.body.users;
+             const { id } = req.user;
              const data = req.body;
              
-             const response = await CartServiceInstance.addItems(user_id, data);
+             const response = await CartServiceInstance.addItem(id, data);
              res.status(200).send(response);
 
         } catch (err) {

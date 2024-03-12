@@ -8,8 +8,8 @@ module.exports = class CartModel {
 
         this.created_at = data.created_at || moment.utc().toISOString();
         this.updated_at = moment.utc().toISOString();
-        // this.converted = data.converted || null;
-        // this.isActive = data.isActive || true;
+        this.converted = data.converted || null;
+        this.isActive = data.isActive || true;
       }
 
     async create(user_id) {
@@ -38,7 +38,6 @@ module.exports = class CartModel {
                                FROM carts
                                WHERE "user_id" = $1`;
             const values = [user_id];
-
             const result = await db.query(statement, values);
             if (result.rows?.length) {
                 return result.rows[0]

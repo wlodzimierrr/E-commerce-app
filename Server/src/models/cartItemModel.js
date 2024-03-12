@@ -54,7 +54,7 @@ module.exports = class CartItemModel {
 
             const statement = `SELECT 
                                     ci.quantity,  
-                                    ci.id AS "id", 
+                                    ci.id AS "cartItemId", 
                                     p.*
                                 FROM "cart_items" ci
                                 INNER JOIN products p ON p.id = ci.product_id  
@@ -78,7 +78,7 @@ module.exports = class CartItemModel {
     static async delete(id) {
 
         try{
-            
+           
             const statement = `DELETE
                                FROM "cart_items"
                                WHERE id = $1
