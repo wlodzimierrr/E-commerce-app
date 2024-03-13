@@ -1,22 +1,11 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import { Breadcrumb, Layout } from 'antd';
-import ProductCard from '../components/productCard';
+import ProductCard from './productCard';
 import { useSelector } from 'react-redux';
-import { loadProducts } from '../store/products/products.action';
-import './login';
 
 const { Content } = Layout;
 
-
-
-const Home = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadProducts());
-  }, [dispatch]);
-
+const ContentComponent = () => {
   const products = useSelector(state => state.products);
 
   return (
@@ -45,4 +34,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ContentComponent;
