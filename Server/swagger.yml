@@ -1,0 +1,189 @@
+swagger: "2.0"
+
+info:
+  description: "E-commerce REST API"
+  version: "1.0.0"
+  title: "E-commerce REST API"
+
+schemes: 
+  - http
+
+host: localhost:3000
+
+basePath: "/"
+
+paths:
+  /auth/register:
+    post:
+      summary: "Register a new user"
+      description: "Register a new user"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: User object that needs to be added to the store
+          required: true
+          schema:
+            type: object
+            required:
+              - username
+              - email
+              - password
+              - firstname
+              - lastname
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              firstname:
+                type: string
+              lastname:
+                type: string
+      responses:
+        200:
+          description: 200 Success
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        409:
+          description: 409 Conflict
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: 500 Internal Server Error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /auth/login:
+    post:
+      summary: "Login to a user account"
+      description: "Login to a user account"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: credentials
+          description: User's login credentials
+          required: true
+          schema:
+            type: object
+            required:
+              - username or email
+              - password
+            properties:
+              username or email:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: 200 Success
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+        401:
+          description: 401 Unauthorized
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: 500 Internal Server Error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /users/{userId}:
+    get:
+      summary: "Get user record"
+      description: "Get user record by user ID"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: The user ID
+      responses:
+        200:
+          description: 200 Success
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              email:
+                type: string
+        500:
+          description: 500 Internal Server Error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    put:
+      summary: "Update user record"
+      description: "Update an existing user's information"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: "The user ID that needs to be updated"
+        - in: body
+          name: userUpdate
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              firstname:
+                type: string
+              lastname:
+                type: string
+      responses:
+        200:
+          description: "User updated successfully"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
