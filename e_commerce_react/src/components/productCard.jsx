@@ -1,21 +1,22 @@
 import React from 'react';
-import { Card, Space } from 'antd';
-import { Link } from 'react-router-dom';
+import { Card, Space, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 function ProductCard(props) {
-
+    const navigate = useNavigate();
     const { data } = props;
 
     return (
-    <Space direction="vertical" size={16}>
+    <Space direction="horizontal" size={16} >
         <Card
         title={data.name}
-        extra={<a href="#" component={Link}
-        to={`/products/${data.id}`}>More</a>}
+        extra={<Button type="primary" danger ghost onClick={() => navigate(`/products/${data.id}`)} >More</Button>}
         style={{
             width: 300,
         }}
         >
+       <img onClick={() => navigate(`/products/${data.id}`)} src="https://surlybikes.com/uploads/bikes/surly-preamble-flat-bar-bike-blue-BK3643-1200x800.jpg" alt="" style={{ height: '150px' }} />
+
         <p>{data.description}</p>
         <p>{data.price }</p>
         </Card>
