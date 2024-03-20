@@ -33,7 +33,7 @@ const Home = () => {
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item></Breadcrumb.Item>
       </Breadcrumb>
-      <section className="grid">
+      <section className="flex flex-row flex-wrap">
         {products && Object.keys(products).length > 0 &&
           Object.keys(products).map((key) => {
             const product = products[key];
