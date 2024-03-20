@@ -24,7 +24,6 @@ module.exports = (app) => {
         try{
             const { userId } = req.params;
             const data = req.body;
-
             const response = await UserServiceInstance.update( { user_id: userId, ...data });
             res.status(200).send(response);
         } catch(err) {
