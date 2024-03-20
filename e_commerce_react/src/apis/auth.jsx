@@ -38,10 +38,3 @@ export const isLoggedIn = async () => {
         throw err.response.data;
     }
 }
-
-export const logout = () => {
-    
-    localStorage.removeItem('token');
-    
-    delete API.defaults.headers.common['Authorization'];
-}

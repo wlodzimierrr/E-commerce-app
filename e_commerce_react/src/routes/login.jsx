@@ -4,10 +4,10 @@ import { useNavigate  } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Divider } from 'antd';
 import TextField from '../components/TextField';
-import Button from '../components/Button';
-import { Breadcrumb, Layout } from 'antd';
+import { Breadcrumb, Layout, Typography, Button } from 'antd';
 import { loginUser } from '../store/auth/auth.actions';
 import * as Yup from 'yup';
+import CustomButton from '../components/Button';
 
 const { Content } = Layout;
 
@@ -31,12 +31,21 @@ const Login = () => {
 
   const loginSchema = Yup.object().shape({
     email: Yup.string()
-      .email("Invalid email address")
-      .required("Email address is required"),
-
+      .test(
+        "email-or-username",
+        "Invalid username or email address",
+        value => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email regex for demonstration
+          const isEmail = emailRegex.test(value);
+          const isUsername = value !== undefined && value.trim().length > 0; // Basic check for username
+          return isEmail || isUsername;
+        }
+      )
+      .required("Username or email address is required"),
     password: Yup.string()
       .required("Password is required")
-  })
+  });
+  
 
   return (
     <Content
@@ -53,27 +62,24 @@ const Login = () => {
       <Breadcrumb.Item>Login</Breadcrumb.Item>
       <Breadcrumb.Item></Breadcrumb.Item>
     </Breadcrumb>
-    <div className="app flex justify-center min-h-screen">
+    <div className="app flex justify-center min-h-screen mt-[20px]">
     <div className="formComp w-full max-w-md"> 
       <div className="formWrapper">
           <Formik
-            initialValues={{email: '', password: ''}}
-            validationSchema={loginSchema}
-            validateOnBlur
-            onSubmit={async (values) => {
-              const { email, password } = values;
-              await handleLogin({username: email, password});
-            }}
-          >
-            <Form className="baseForm">
-              <header className="baseFormHeader">
-                <h1 className="baseFormHeading">Log in</h1>
-              </header>
-              <TextField
-                label="Email"
-                name="email"
-                id="email-input"
-              />
+              initialValues={{email: '', password: ''}}
+              validationSchema={loginSchema}
+              validateOnBlur
+              onSubmit={async (values) => {
+                const { email: usernameOrEmail, password } = values;
+                await handleLogin({ username: usernameOrEmail, password });
+              }}
+            >
+              <Form className="baseForm">
+                <TextField
+                  label="Username or Email"
+                  name="email" 
+                  id="email-input"
+                />
               <TextField
                 label="Password"
                 name="password"
@@ -82,10 +88,12 @@ const Login = () => {
               {
                 error && <div className="text-red-500">{error}</div>
               }
-               <div className="space-y-4 flex justify-center">
-              <Button variant="contained" color="primary" type="submit" isLoading={isLoading}>Submit</Button>
+               <div className="space-y-4 flex justify-center mt-[1px]">
+              <CustomButton variant="contained" color="primary" size="small" type="submit" isLoading={isLoading}>Submit</CustomButton>
               </div>
-              <p>Forgotten your password?</p>
+              <div>
+              <Typography>New here?<Button className="ml-[-10px]" type="link" onClick={() => navigate('/register')}>Create an Account</Button></Typography>
+              </div>
               <Divider />
             </Form>
           </Formik>

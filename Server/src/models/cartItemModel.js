@@ -34,7 +34,7 @@ module.exports = class CartItemModel {
             const updateCartItemData = { ...data, updated_at: moment.utc().toISOString() };
             const condition = pgp.as.format('WHERE id = ${id} RETURNING *', { id });
             const statement = pgp.helpers.update(updateCartItemData, null, 'cart_items') + condition;
-
+           
             const result = await db.query(statement);
 
             if (result.rows?.length) {
@@ -74,6 +74,7 @@ module.exports = class CartItemModel {
             throw new Error(err);
         }
     }
+    
 
     static async delete(id) {
 

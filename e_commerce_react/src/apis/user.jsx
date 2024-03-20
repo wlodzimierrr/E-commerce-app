@@ -12,13 +12,11 @@ export const fetchUser = async (userId) => {
   }
 }
 
-export const updateUser = async (userId) => {
+export const updateUser = async (userId, data) => {
   try {
-    const response = await API.post(`users/${userId}`, data);
-
+    const response = await API.put(`users/${userId}`, data);
     return response.data;
-
-  } catch(err) {
+  } catch (err) {
     throw err.response.data;
   }
-}
+};

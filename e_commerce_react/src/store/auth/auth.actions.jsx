@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { login, isLoggedIn, register, logout } from '../../apis/auth'
+import { login, isLoggedIn, register } from '../../apis/auth'
+import { updateUser } from "../../apis/user";
 import API from '../../apis/client'
 
 export const checkLoginStatus = createAsyncThunk(
@@ -14,7 +15,6 @@ export const checkLoginStatus = createAsyncThunk(
                 user: response.user
             }
         } catch(err) {
-            // Example of using rejectWithValue to provide more detailed error info
             return thunkAPI.rejectWithValue({ message: 'Failed to verify login status', error: err });
         }
     }
@@ -50,8 +50,6 @@ export const logoutUser = createAsyncThunk(
     'auth/logoutUser',
     async (_, thunkAPI) => {
         try {
-            logout(); 
-
             localStorage.removeItem('token');
             delete API.defaults.headers.common['Authorization'];
 
@@ -73,3 +71,16 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+export const updateUserDetails = createAsyncThunk(
+    'auth/updateUserDetails',
+    async ({ user_id, data }, thunkAPI) => {
+      try {
+        const updatedUserDetails = await updateUser(user_id, data);
+        return updatedUserDetails;
+      } catch(err) {
+        return thunkAPI.rejectWithValue(err.response.data);
+      }
+    }
+  );
+  
