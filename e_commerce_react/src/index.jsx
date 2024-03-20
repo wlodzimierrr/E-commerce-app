@@ -4,20 +4,13 @@ import App from './App';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import rootReducer from './store/rootReducers'
-import { setAuthToken } from './apis/client'
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-// Load the token from storage and set it in the Axios headers
-const token = localStorage.getItem('token');
-setAuthToken(token);
-
-// Initializes redux store
 const store = configureStore({
   reducer: rootReducer
 });
 
-// Use createRoot API for React 18
 const root = createRoot(document.getElementById('root'));
 root.render(
   <StrictMode>
