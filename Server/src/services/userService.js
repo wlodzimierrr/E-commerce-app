@@ -6,9 +6,9 @@ module.exports = class UserServices {
     
     async get(data) {
 
-        const { user_id } = data;
+        const { userId } = data;
         try {
-            const user = await UserModelInstance.findOneById(user_id)
+            const user = await UserModelInstance.findOneById(userId)
 
             if(!user) {
                 throw createError(404, 'User record not found');

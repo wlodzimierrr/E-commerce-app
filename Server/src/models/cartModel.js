@@ -9,13 +9,13 @@ module.exports = class CartModel {
         this.created_at = data.created_at || moment.utc().toISOString();
         this.updated_at = moment.utc().toISOString();
         this.converted = data.converted || null;
-        this.isActive = data.isActive || true;
+        this.isactive = data.isactive || true;
       }
 
     async create(user_id) {
         try {
-        
-            const data = { user_id, ...this}    
+            const data = { user_id, ...this}  
+            console.log(data)
             const newCart = new this.constructor(data);
             const dataWithTimestamps = { ...data, created_at: newCart.created_at};
             const statement = pgp.helpers.insert( dataWithTimestamps, null, 'carts') + ' RETURNING *';
@@ -31,13 +31,13 @@ module.exports = class CartModel {
         }
       }
 
-    static async findOneByUser(user_id) {
+    static async findOneByUser(userId) {
         try{
 
             const statement = `SELECT *
                                FROM carts
                                WHERE "user_id" = $1`;
-            const values = [user_id];
+            const values = [userId];
             const result = await db.query(statement, values);
             if (result.rows?.length) {
                 return result.rows[0]
@@ -46,7 +46,7 @@ module.exports = class CartModel {
             return null;
         
         } catch(err) {
-            throw err;
+            throw new Error(err);
         }
     }
 
@@ -66,7 +66,7 @@ module.exports = class CartModel {
             return null;
         
         } catch(err) {
-            throw err;
+            throw new Error(err);
         }
     } 
 };

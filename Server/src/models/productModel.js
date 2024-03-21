@@ -20,7 +20,7 @@ module.exports = class ProductModel {
               return [];
               
         } catch(err) {
-            throw err;
+            throw new Error(err);
         }
     }
 
@@ -40,7 +40,7 @@ module.exports = class ProductModel {
             return null;
         
         } catch(err) {
-            throw err;
+            throw new Error(err);
         }
     } 
 

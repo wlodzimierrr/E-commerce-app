@@ -14,10 +14,10 @@ module.exports = async (app) => {
     await swaggerLoader(app);
 
     app.use((err, req, res, next) => {
-      console.error(err); // Always log the error
+      console.error(err); 
 
       if (!res.headersSent) {
-          const statusCode = err.statusCode || err.status || 500; // Fallback to 500
+          const statusCode = err.statusCode || err.status || 500; 
           res.status(statusCode).json({
               message: err.message || 'An unexpected error occurred',
           });

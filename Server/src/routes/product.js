@@ -35,9 +35,9 @@ module.exports = (app) => {
     router.put('/:ProductId', async (req, res, next) => {
         try{
             const { ProductId } = req.params;
-            const { stock_quantity } = req.body;
+            const { stockQuantity } = req.body;
 
-            const response = await ProductServiceInstance.update( { id: ProductId, stock_quantity });
+            const response = await ProductServiceInstance.update( { id: ProductId, stockQuantity });
             res.status(200).send(response);
         } catch(err) {
             next(err);

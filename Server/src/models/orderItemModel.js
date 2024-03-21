@@ -30,7 +30,7 @@ module.exports = class OrderItemModel {
         }
     }
 
-    static async find(order_id) {
+    static async find(orderId) {
         try { 
             
             const statement = `SELECT 
@@ -40,7 +40,7 @@ module.exports = class OrderItemModel {
                                FROM order_items oi
                                INNER JOIN products p ON p.id = oi.product_id
                                WHERE oi.order_id = $1`; 
-            const values = [order_id];
+            const values = [orderId];
 
             const result = await db.query(statement, values);
             

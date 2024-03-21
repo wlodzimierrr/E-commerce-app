@@ -4,7 +4,7 @@ const moment = require('moment');
 
 module.exports = class CartItemModel {
 
-    constructor(data = {}) {
+    constructor() {
 
         this.created_at = data.created_at || moment.utc().toISOString();
         this.updated_at = moment.utc().toISOString();

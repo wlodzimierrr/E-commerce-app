@@ -16,10 +16,10 @@ module.exports = class ProductService {
         }
     };
 
-    async get(id) {
+    async get(productId) {
 
         try{
-            const product = ProductModelInstance.findOne(id);
+            const product = ProductModelInstance.findOne(productId);
 
             if (!product) {
                 throw createError(404, 'Product not found');
