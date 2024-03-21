@@ -51,6 +51,7 @@ module.exports = (app) => {
                 user = await UserModelInstance.findOneByUsername(userIdentifier);
             }
             const data = req.body;
+            
             const response = await CartServiceInstance.addItem(user.id, data);
             res.status(200).send(response);
         } catch (err) {

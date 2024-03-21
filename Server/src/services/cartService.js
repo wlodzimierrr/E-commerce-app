@@ -5,6 +5,7 @@ const CartModel = require('../models/cartModel');
 const CartItemModel = require('../models/cartItemModel');
 const OrderModel = require('../models/orderModel')
 const ProductModel = require('../models/productModel');
+const SoldItemModel = require('../models/soldItemModel');
 
 
 module.exports = class CartService {
@@ -43,6 +44,7 @@ module.exports = class CartService {
     
     async addItem(userId, { product_id, quantity }) {
         try {
+            
             let cart = await CartModel.findOneByUser(userId);
             if (!cart) {
                 cart = await this.create({ userId })
@@ -116,6 +118,27 @@ module.exports = class CartService {
             description: 'E-commerce App charge'
         })
 
+        async function addSoldItems(items) {
+            for (const item of items.items) {
+                console.log(item)
+                const soldItemData = {
+                    order_id: item.order_id,
+                    model: item.model, 
+                    product_id: item.product_id,
+                    price: item.price,
+                    quantity: item.quantity,
+                };
+                try {
+                    const result = await SoldItemModel.create(soldItemData);
+                   return result
+                } catch (error) {
+                    console.error(error);
+                }
+            } 
+            
+    }
+        await addSoldItems(Order)
+
       // On successful charge to payment method, update order status to COMPLETE
         const order = await Order.update({ status: 'COMPLETE' });
 
@@ -130,7 +153,12 @@ module.exports = class CartService {
                         console.error(`Cannot reduce stock below zero for product ID ${productId}.`);
                         continue; 
                     }
-                    await ProductModel.update({id,  stock_quantity: newStockQuantity} );
+                    try {
+                        const result = await ProductModel.update({id,  stock_quantity: newStockQuantity} );
+                       return result
+                    } catch (error) {
+                        console.error(error);
+                    }
                 }
             }
         }
@@ -145,8 +173,12 @@ module.exports = class CartService {
                 await CartModel.delete(cartId)
             }
         }
-
-        await deleteCartAndCartItems(cartItems, cartId)
+        try {
+            const result =  await deleteCartAndCartItems(cartItems, cartId)
+           return result
+        } catch (error) {
+            console.error(error);
+        }
 
         return order;
 

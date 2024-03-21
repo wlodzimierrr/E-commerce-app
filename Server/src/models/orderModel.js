@@ -15,7 +15,7 @@ module.exports = class OrderModel {
     }
 
     addItems(items) {
-        this.items = items.map(item => new OrderItemModel({ ...item, order_id: this.id }));
+        this.items = items.map(item => new OrderItemModel({ ...item, OrderId: this.id }));
     }
 
     async create () {

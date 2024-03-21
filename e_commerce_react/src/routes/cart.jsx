@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { loadCart } from '../store/cart/cart.actions';
 import { Breadcrumb, Layout, Table, Typography, Button } from 'antd';
 import CartItemCard from '../components/CartItemCard';
-import Divider from '@material-ui/core/Divider';
+
 
 const { Content } = Layout;
 

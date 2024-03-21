@@ -9,7 +9,8 @@ module.exports = class OrderItemModel {
         this.price = data.price || 0;
         this.product_id = data.id; 
         this.quantity = data.quantity || 1;
-        this.order_id = data.OrderId || null; 
+        this.order_id = data.OrderId || null;
+        this.model = data.model || null;
     }
 
     static async create(data) {
