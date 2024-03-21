@@ -12,8 +12,8 @@ module.exports = (app) => {
 
         try {
             
-            const { user_id } = req.query;
-            const response = await OrderServiceInstance.list(user_id)
+            const { userId } = req.query;
+            const response = await OrderServiceInstance.list(userId)
             res.status(200).send(response);
 
         } catch(err) {
@@ -22,12 +22,12 @@ module.exports = (app) => {
     });
     
 
-    router.get('/:order_id', async (req, res, next) => {
+    router.get('/:orderId', async (req, res, next) => {
 
         try {
-            const { order_id } = req.params;
+            const { orderId } = req.params;
 
-            const response = await OrderServiceInstance.findById(order_id);
+            const response = await OrderServiceInstance.findById(orderId);
             res.status(200).send(response);
 
         } catch(err) {

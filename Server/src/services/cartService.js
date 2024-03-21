@@ -9,12 +9,12 @@ module.exports = class CartService {
 
     async create(data) {
 
-        const { user_id } = data;
+        const { userId } = data;
 
         try{
 
             const Cart = new CartModel();
-            const cart = await Cart.create(user_id);
+            const cart = await Cart.create(userId);
 
             return cart;
         } catch (err) {
@@ -22,12 +22,12 @@ module.exports = class CartService {
         }
     };
 
-    async loadCart(user_id) {
+    async loadCart(userId) {
 
         try{
 
-            const  cart = await CartModel.findOneByUser(user_id);
-            const items = await CartItemModel.find(cart.cartid);
+            const  cart = await CartModel.findOneByUser(userId);
+            const items = await CartItemModel.find(cart.id);
             cart.items = items;
             
 
@@ -76,27 +76,34 @@ module.exports = class CartService {
     //     }
     // }
     
-    async addItem(user_id, item) {
+    async addItem(userId, { product_id, quantity }) {
         try {
-        // Load user cart based on ID
-        const cart = await CartModel.findOneByUser(user_id);
-       
-        // Create cart item
-        const cartItem = await CartItemModel.create({ cart_id: cart.id, ...item });
-        
-        return cartItem;
+            let cart = await CartModel.findOneByUser(userId);
+            if (!cart) {
+                cart = await this.create({ userId })
+            }
+            const existingItems = await CartItemModel.find(cart.id);
+            const existingItem = existingItems.find(item => item.id === product_id);
+          
+            if (existingItem) {
+                const updatedQuantity = existingItem.quantity + quantity;
+                const updatedItem = await CartItemModel.update(existingItem.cartItemId, { quantity: updatedQuantity });
+                return updatedItem;
+            } else {
+                const cartItem = await CartItemModel.create({ cart_id: cart.id, product_id, quantity });
+                return cartItem;
+            }
 
         } catch(err) {
-        throw err;
+            throw err;
         }
     }
     
-    
 
-    async updateItem(id, data) {
+    async updateItem(cartItemId, data) {
         
         try{
-            const cartItem = await CartItemModel.update(id, data)
+            const cartItem = await CartItemModel.update(cartItemId, data)
         
             return cartItem;
         } catch(err) {
@@ -104,10 +111,10 @@ module.exports = class CartService {
         }
     }
 
-    async removeItem(id) {
+    async removeItem(cartItemId) {
 
         try{
-            const cartItem = await CartItemModel.delete(id)
+            const cartItem = await CartItemModel.delete(cartItemId)
 
             return cartItem;
             
@@ -186,40 +193,40 @@ module.exports = class CartService {
 //           }
 //     }
 // }
-    async checkout(cart_id, user_id, paymentInfo) {
-        try {
-        // Init Stripe with secret key
-        const stripe = require('stripe')(STRIPE_SECRET_KEY);
+async checkout(cartId, userId, paymentInfo) {
+    try {
+      // Init Stripe with secret key
+      const stripe = require('stripe')(STRIPE_SECRET_KEY);
 
-        // Load cart items
-        const cartItems = await CartItemModel.find(cart_id);
+      // Load cart items
+      const cartItems = await CartItemModel.find(cartId);
 
-        // Generate total price from cart items
-        const total = cartItems.reduce((total, item) => {
-            return total += Number(item.price);
-        }, 0);
+      // Generate total price from cart items
+      const total = cartItems.reduce((total, item) => {
+        return total += Number(item.price);
+      }, 0);
 
-        // Generate initial order
-        const Order = new OrderModel({ total, user_id });
-        Order.addItems(cartItems);
-        await Order.create();
-        
-        // Make charge to payment method
-        await stripe.charges.create({
-            amount: total,
-            currency: 'usd',
-            source: paymentInfo.id,
-            description: 'Charge'
-        })
+      // Generate initial order
+      const Order = new OrderModel({ total, userId });
+      Order.addItems(cartItems);
+      await Order.create();
+      
+      // Make charge to payment method
+      await stripe.charges.create({
+        amount: total,
+        currency: 'usd',
+        source: paymentInfo.id,
+        description: 'Codecademy Charge'
+      })
 
-        // On successful charge to payment method, update order status to COMPLETE
-        const order = Order.update({ status: 'COMPLETE' });
+      // On successful charge to payment method, update order status to COMPLETE
+      const order = Order.update({ status: 'COMPLETE' });
 
-        return order;
+      return order;
 
-        } catch(err) {
-        throw err;
-        }
+    } catch(err) {
+      throw err;
     }
+  }
 
 }

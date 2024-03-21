@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../loaders/jwt');
 const CartService = require('../services/cartService');
+const UserModel = require('../models/userModel');
+const UserModelInstance = new UserModel();
 
 const CartServiceInstance = new CartService();
 
@@ -8,100 +11,82 @@ module.exports = (app) => {
 
     app.use('/api/carts', router);
 
-    router.get ('/cart', async (req, res, next) => {
+    router.use(authenticateToken);
 
-        try{
-            const { user_id } = req.body.users;
-
-            const response = await CartServiceInstance.loadCart(user_id);
+    router.get('/cart', async (req, res, next) => {
+        try {
+            const userIdentifier = req.user.email;
+            let user;
+        
+            if (userIdentifier && userIdentifier.includes('@')) {
+                user = await UserModelInstance.findByEmail(userIdentifier);
+            } else {
+                user = await UserModelInstance.findOneByUsername(userIdentifier);
+            }
+            const response = await CartServiceInstance.loadCart(user.id);
             res.status(200).send(response);
-
-        } catch(err) {
-            next(err);
-          }
-    });
-
-    router.put('/cart', async (req, res, next) => {
-
-        try{
-            const { user_id } = req.body.users;
-            
-
-            const response = await CartServiceInstance.update( { user_id });
-            res.status(200).send(response);
-
         } catch(err) {
             next(err);
         }
     });
 
-    
     router.post('/cart', async (req, res, next) => {
-
-        try{
-            const { user_id } = req.body.users;
-
-            const response = await CartServiceInstance.create({ user_id: user_id });
+        try {
+            const userId = req.user.id;
+            const response = await CartServiceInstance.create({ userId });
             res.status(200).send(response);
-
         } catch (err) {
-             next(err);
+            next(err);
         }
     });
 
     router.post('/cart/items', async (req, res, next) => {
-
         try {
-             const { id } = req.user;
-             const data = req.body;
-             
-             const response = await CartServiceInstance.addItem(id, data);
-             res.status(200).send(response);
-
+            const userIdentifier = req.user.email;
+            let user;
+        
+            if (userIdentifier && userIdentifier.includes('@')) {
+                user = await UserModelInstance.findByEmail(userIdentifier);
+            } else {
+                user = await UserModelInstance.findOneByUsername(userIdentifier);
+            }
+            const data = req.body;
+            const response = await CartServiceInstance.addItem(user.id, data);
+            res.status(200).send(response);
         } catch (err) {
-             next(err);
+            next(err);
         }
     });
 
     router.put('/cart/items/:cartItemId', async (req, res, next) => {
-
-        try{
-            const { cartItemId  } = req.params;
-            const data = req.body;
-
-            const response = await CartServiceInstance.updateItem(cartItemId , data)
+        try {
+            const { cartItemId } = req.params;
+            const updateData = req.body; 
+            const response = await CartServiceInstance.updateItem(cartItemId, updateData);
             res.status(200).send(response);
-
         } catch (err) {
-             next(err);
+            next(err);
         }
     });
 
     router.delete('/cart/items/:cartItemId', async (req, res, next) => {
-
-        try{
-            const {cartItemId} = req.params;
-
-            const response = await CartServiceInstance.removeItem(cartItemId)
+        try {
+            const { cartItemId } = req.params;
+            const response = await CartServiceInstance.removeItem(cartItemId);
             res.status(200).send(response);
-
-        } catch(err) {
-          next(err);
+        } catch (err) {
+            next(err);
         }
     });
 
-    router.post('/cart/:cartId/checkout', async (req, res, next) => {
-
+    router.post('/cart/checkout', async (req, res, next) => {
         try {
-            const { user_id } = req.body.users;
-            const { cartId } = req.params
-            const { payment_info } = req.body; 
-            
-            const response = await CartServiceInstance.checkout(cartId, user_id, payment_info);
-      
+            const userId = req.user.id;
+            const { paymentInfo } = req.body; 
+            const response = await CartServiceInstance.checkout(userId, paymentInfo);
             res.status(200).send(response);
-          } catch(err) {
+        } catch (err) {
             next(err);
-          }
-      });
+        }
+    });
 };

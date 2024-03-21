@@ -62,14 +62,14 @@ module.exports = class OrderModel {
           }
         }
     
-    static async findByUser(user_id) {
+    static async findByUser(userId) {
 
         try {
 
             const statement = `SELECT *
                               FROM orders
                               WHERE "user_id" = $1`;
-            const values = [user_id];
+            const values = [userId];
 
             const result = await db.query(statement, values);
             if (result.rows?.length) {
@@ -83,14 +83,14 @@ module.exports = class OrderModel {
             }
         }
     
-    static async findById(order_id) {
+    static async findById(orderId) {
 
         try{
 
             const statement = `SELECT *
                                FROM orders
                                WHERE id = $1`;
-            const values = [order_id];
+            const values = [orderId];
             
             const result = await db.query(statement, values);
 

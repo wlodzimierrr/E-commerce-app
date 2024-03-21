@@ -6,12 +6,12 @@ module.exports = class OrderService {
 
     async create(data) {
 
-        const { user_id } = data;
+        const { userId } = data;
 
         try {
 
             const Order = new OrderModel();
-            const order = await order.create( { user_id, total} );
+            const order = await order.create( { userId, total} );
 
             return cart;
 
@@ -21,10 +21,10 @@ module.exports = class OrderService {
     
     };
 
-    async list(user_id) {
+    async list(userId) {
 
         try{
-            const orders = await OrderModel.findByUser(user_id);
+            const orders = await OrderModel.findByUser(userId);
 
             return orders;
 
@@ -33,11 +33,11 @@ module.exports = class OrderService {
         }
       }
 
-    async findById(order_id) {
+    async findById(orderId) {
 
         try{
 
-            const order = await OrderModel.findById(order_id);
+            const order = await OrderModel.findById(orderId);
 
             return order;
         } catch(err) {

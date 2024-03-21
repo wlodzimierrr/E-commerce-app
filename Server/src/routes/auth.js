@@ -40,28 +40,21 @@ module.exports = (app, passport) => {
     router.get('/logged_in', authenticateToken, async (req, res, next) => {
       try {
           const userIdentifier = req.user.email;
-    
-          // Initialize user variable
+
           let user;
       
-          // Determine if the identifier is an email or username
           if (userIdentifier && userIdentifier.includes('@')) {
-              // Find by email
               user = await UserModelInstance.findByEmail(userIdentifier);
           } else {
-              // Find by username
               user = await UserModelInstance.findOneByUsername(userIdentifier);
           }
           
-          // User not found
           if (!user) {
               return res.status(404).send({ message: "User not found" });
           }
           
-          // Load user's cart
-          const cart = await CartServiceInstance.loadCart(user.user_id);
+          const cart = await CartServiceInstance.loadCart(user.id);
           
-          // Send response
           res.status(200).send({
               cart,
               loggedIn: true,
