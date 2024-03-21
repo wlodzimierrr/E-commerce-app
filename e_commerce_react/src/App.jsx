@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from 'antd';
-import { setAuthToken } from './apis/client'
+import { setAuthToken } from './apis/client';
 import './App.css';
 
 // Import your components
@@ -12,10 +12,10 @@ import PrivateRoute from './components/privateRoute'
 import Login from './routes/login';
 import ProductDetails from './routes/productDetails';
 import Cart from './routes/cart';
-import Register from './routes/register'
-import Account from './routes/account'
-// import Orders from './routes/orders'
-// import Checkout from './routes/checkout';
+import Register from './routes/register';
+import Account from './routes/account';
+import OrderHistory from './routes/orderHistory';
+import Checkout from './routes/checkout';
 
 function App() {
   useEffect(() => {
@@ -37,9 +37,9 @@ function App() {
             <Route path="/products/:productId" element={<ProductDetails />} />
             {/* Private Routes */}
             <Route path='/cart' element={<PrivateRoute children={<Cart />} />} />
-            {/* <Route path='/checkout' element={<PrivateRoute children={<Checkout />} />} /> */}
+            <Route path='/checkout' element={<PrivateRoute children={<Checkout />} />} />
             <Route path='/account' element={<PrivateRoute children={<Account />} />} />
-            {/* <Route path='/orders' element={<PrivateRoute children={<Orders />} />} /> */}
+            <Route path='/orders' element={<PrivateRoute children={<OrderHistory />} />} />
             {/* Redirect any unknown routes to the home page */}
             <Route path='*' element={<Navigate to="/" replace />} />
           </Routes>

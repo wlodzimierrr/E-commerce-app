@@ -15,7 +15,7 @@ module.exports = class OrderModel {
     }
 
     addItems(items) {
-        this.items = items.map(item => new OrderItemModel(item));
+        this.items = items.map(item => new OrderItemModel({ ...item, order_id: this.id }));
     }
 
     async create () {
@@ -27,9 +27,9 @@ module.exports = class OrderModel {
             const statement = pgp.helpers.insert(order, null , 'orders') + ' RETURNING *';
 
             const result = await db.query(statement);
-
+  
             if (result.rows?.length) {
-
+                
                 Object.assign(this, result.rows[0]);
     
                 return result.rows[0];

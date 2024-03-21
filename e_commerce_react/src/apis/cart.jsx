@@ -44,11 +44,11 @@ export const removeFromCart = async (cartItemId) => {
 
 export const checkout = async (cartId, paymentInfo) => {
   try {
-    const response = await API.post(`carts/${cartId}/checkout`, { cartId, paymentInfo });
+    const response = await API.post(`carts/cart/checkout`, { cartId, paymentInfo });
 
     return response.data;
 
   } catch(err) {
     throw err.response.data;
-  }
+  } 
 }

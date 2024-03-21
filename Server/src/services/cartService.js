@@ -1,8 +1,10 @@
+require('dotenv').config();
+const Stripe = require('stripe');
 const createError = require('http-errors');
 const CartModel = require('../models/cartModel');
 const CartItemModel = require('../models/cartItemModel');
-const ProductModel = require('../models/productModel');
 const OrderModel = require('../models/orderModel')
+const ProductModel = require('../models/productModel');
 
 
 module.exports = class CartService {
@@ -38,43 +40,6 @@ module.exports = class CartService {
         }
     }
 
-    // async addItems(user_id, item) {
-    //     try {
-    //         const { id: product_id, quantity: requestedQuantity }  = item;
-    
-    //         const cart = await CartModel.findOneByUser(user_id);
-            
-    //         if (!cart) {
-    //             throw new Error('Cart not found');
-    //         }
-    
-    //         const product = await ProductModel.findOne(product_id);
-    //         if (!product) {
-    //             throw new Error('Product not found');
-    //         }
-    
-            
-    //         if (product.quantity < requestedQuantity) {
-               
-    //             throw new Error(`Only ${product.quantity} units of product ${product_id} available, but ${requestedQuantity} units were requested.`);
-    //         }
-    
-           
-    //         const cart_item = await CartItemModel.create({ 
-    //             cart_id: cart.cartid, 
-    //             product_id, 
-    //             quantity: requestedQuantity 
-    //         });
-    
-            
-    
-    //         return cart_item;
-
-    //     } catch(err) {
-    //         console.error('Error adding item to cart:', err);
-    //         throw err; 
-    //     }
-    // }
     
     async addItem(userId, { product_id, quantity }) {
         try {
@@ -123,110 +88,71 @@ module.exports = class CartService {
         }
     }
 
-//     async checkout(cart_id, user_id, payment_info) {
-//         try {
 
-//             // const stripe = require("stripe")('sk_test_26PHem9AhJZvU623DfE1x4sd');
-//             // Load cart items
-//             const cartItems = await CartItemModel.find(cart_id);
-            
-          
-//             // Generate total price from cart items
-//             // const total = cartItems.reduce((total, item) => {
-//             //     return total += Number(item.price) * item.quantity;
-//             //   }, 0);
-//             const total = cartItems.reduce((total, item) => {
-//                 return total += Number(item.price);
-//               }, 0);
-      
-//             // Generate initial order
-//             const Order = new OrderModel({ user_id, total });
-//             Order.addItems(cartItems);
-//             await Order.create();
-            
-      
-//             // Make charge to payment method 
-//             // const charge = await stripe.charges.create({
-//             //   amount: total,
-//             //   currency: 'gbp',
-//             //   source: payment_info.id,
-//             //   description: 'Charge'
-//             // });
-      
-//             // On successful charge to payment method, update order status to COMPLETE
-//             const order = Order.update({ status: 'COMPLETE' });
-            
-//             // Update product quantities if status 'COMPLETE'
-//             // Assuming cartItems is an array of items where each item has an `id` and a `quantity`
-
-//             for (const item of cartItems) {
-//                 // Find the product to update its stock quantity
-//                 const product = await ProductModel.findOne(item.id);
-//                 if (!product) {
-//                     console.log(`Product with ID ${item.id} not found`);
-//                     continue; // Skip this iteration if the product is not found
-//                 }
-
-//                 // Calculate the new stock quantity
-//                 const newStockQuantity = product.stock_quantity - item.quantity;
-                
-//                 // Prepare the data for updating the product
-//                 const updateData = {
-//                     id: item.id,
-//                     stock_quantity: newStockQuantity, // Assuming the column in your DB is named `stock_quantity`
-//                     // Include any other fields that need to be updated
-//                 };
-
-//                 // Update the product in the database
-//                 try {
-//                     const updatedProduct = await ProductModel.update(updateData);
-//                     console.log(`Updated product ID ${item.id}:`, updatedProduct);
-//                 } catch (err) {
-//                     console.error(`Error updating product ID ${item.id}:`, err);
-//                 }
-//             }
-
-//                 return order;
-      
-//           } catch(err) {
-//             throw err;
-//           }
-//     }
-// }
-async checkout(cartId, userId, paymentInfo) {
-    try {
+    async checkout(cartId, user_id, paymentInfo) {
+        try {
       // Init Stripe with secret key
-      const stripe = require('stripe')(STRIPE_SECRET_KEY);
-
+        const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+    
       // Load cart items
-      const cartItems = await CartItemModel.find(cartId);
+        const cartItems = await CartItemModel.find(cartId);
 
       // Generate total price from cart items
-      const total = cartItems.reduce((total, item) => {
-        return total += Number(item.price);
-      }, 0);
+        const total = cartItems.reduce((total, item) => {
+            return total += Number(item.price);
+        }, 0);
 
       // Generate initial order
-      const Order = new OrderModel({ total, userId });
-      Order.addItems(cartItems);
-      await Order.create();
+        const Order = new OrderModel({ total, user_id });
+        await Order.create();
+         Order.addItems(cartItems);
+      
       
       // Make charge to payment method
-      await stripe.charges.create({
-        amount: total,
-        currency: 'usd',
-        source: paymentInfo.id,
-        description: 'Codecademy Charge'
-      })
+        await stripe.charges.create({
+            amount: total,
+            currency: 'usd',
+            source: paymentInfo.id,
+            description: 'E-commerce App charge'
+        })
 
       // On successful charge to payment method, update order status to COMPLETE
-      const order = Order.update({ status: 'COMPLETE' });
+        const order = await Order.update({ status: 'COMPLETE' });
 
-      return order;
+        async function updateProductQuantities(orderItems) {
+            if (order.status === 'COMPLETE') {
+                for (const item of orderItems) {
+                    const id = item.id; 
+                    const purchasedQuantity = item.quantity;
+                    const currentStockQuantity = item.stock_quantity;
+                    const newStockQuantity = currentStockQuantity - purchasedQuantity;
+                    if (newStockQuantity < 0) {
+                        console.error(`Cannot reduce stock below zero for product ID ${productId}.`);
+                        continue; 
+                    }
+                    await ProductModel.update({id,  stock_quantity: newStockQuantity} );
+                }
+            }
+        }
+        await updateProductQuantities(cartItems)
 
-    } catch(err) {
-      throw err;
+        async function deleteCartAndCartItems(orderItems, cartId) {
+            if (order.status === 'COMPLETE') {
+                for (const item of orderItems) {
+                    const cartItemId = item.cartItemId
+                    await CartItemModel.delete(cartItemId)
+                }
+                await CartModel.delete(cartId)
+            }
+        }
+
+        await deleteCartAndCartItems(cartItems, cartId)
+
+        return order;
+
+        } catch(err) {
+        throw err;
+        }
     }
-  }
 
 }
