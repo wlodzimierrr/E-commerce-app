@@ -7,14 +7,15 @@ module.exports = class OrderItemModel {
         this.created_at = data.created_at || moment.utc().toISOString();
         this.updated_at = moment.utc().toISOString();
         this.price = data.price || 0;
-        this.product_id = data.product_id; 
+        this.product_id = data.id; 
         this.quantity = data.quantity || 1;
-        this.order_id = data.order_id || null; 
+        this.order_id = data.OrderId || null;
+        this.model = data.model || null;
     }
 
     static async create(data) {
         try {
-        
+            
             const statement = pgp.helpers.insert(data, null, 'order_items') + ' RETURNING *';
 
             const result = await db.query(statement);

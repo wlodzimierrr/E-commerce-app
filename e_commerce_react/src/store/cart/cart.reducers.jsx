@@ -19,7 +19,7 @@ const cartSlice = createSlice({
         Object.assign(state, cart);
       })
       .addCase(checkoutCart.fulfilled, (state, action) => {
-        
+        state.items = [];
       })
       .addCase(loadCart.fulfilled, (state, action) => {
         const { cart } = action.payload;

@@ -15,7 +15,6 @@ module.exports = class CartModel {
     async create(user_id) {
         try {
             const data = { user_id, ...this}  
-            console.log(data)
             const newCart = new this.constructor(data);
             const dataWithTimestamps = { ...data, created_at: newCart.created_at};
             const statement = pgp.helpers.insert( dataWithTimestamps, null, 'carts') + ' RETURNING *';
@@ -68,5 +67,28 @@ module.exports = class CartModel {
         } catch(err) {
             throw new Error(err);
         }
-    } 
+    }
+    
+    static async delete(id) {
+
+        try{
+           
+            const statement = `DELETE
+                               FROM "carts"
+                               WHERE id = $1
+                               RETURNING *`;
+            const values = [id];
+
+            const result = await db.query(statement, values)
+
+            if (result.row?.length) {
+                return result.rows[0];
+            }
+
+            return null;
+
+        } catch(err) {
+            throw new Error(err);
+        }
+    }
 };

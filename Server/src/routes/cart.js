@@ -51,6 +51,7 @@ module.exports = (app) => {
                 user = await UserModelInstance.findOneByUsername(userIdentifier);
             }
             const data = req.body;
+            
             const response = await CartServiceInstance.addItem(user.id, data);
             res.status(200).send(response);
         } catch (err) {
@@ -81,9 +82,9 @@ module.exports = (app) => {
 
     router.post('/cart/checkout', async (req, res, next) => {
         try {
-            const userId = req.user.id;
-            const { paymentInfo } = req.body; 
-            const response = await CartServiceInstance.checkout(userId, paymentInfo);
+            const id = req.user.id;
+            const { cartId, paymentInfo } = req.body;
+            const response = await CartServiceInstance.checkout(cartId, id ,paymentInfo);
             res.status(200).send(response);
         } catch (err) {
             next(err);
