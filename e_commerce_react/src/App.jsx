@@ -14,8 +14,8 @@ import ProductDetails from './routes/productDetails';
 import Cart from './routes/cart';
 import Register from './routes/register'
 import Account from './routes/account'
-import Orders from './routes/orders'
-import Checkout from './routes/checkout';
+// import Orders from './routes/orders'
+// import Checkout from './routes/checkout';
 
 function App() {
   useEffect(() => {
@@ -37,9 +37,9 @@ function App() {
             <Route path="/products/:productId" element={<ProductDetails />} />
             {/* Private Routes */}
             <Route path='/cart' element={<PrivateRoute children={<Cart />} />} />
-            <Route path='/checkout' element={<PrivateRoute children={<Checkout />} />} />
+            {/* <Route path='/checkout' element={<PrivateRoute children={<Checkout />} />} /> */}
             <Route path='/account' element={<PrivateRoute children={<Account />} />} />
-            <Route path='/orders' element={<PrivateRoute children={<Orders />} />} />
+            {/* <Route path='/orders' element={<PrivateRoute children={<Orders />} />} /> */}
             {/* Redirect any unknown routes to the home page */}
             <Route path='*' element={<Navigate to="/" replace />} />
           </Routes>
