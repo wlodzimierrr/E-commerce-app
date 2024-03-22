@@ -27,6 +27,7 @@ module.exports = (app, passport) => {
     router.post('/login', passport.authenticate('local'), async (req, res, next) => {
 
         try {
+    
             const { username, password } = req.body;
             const { user, token } = await AuthServiceInstance.login({ email: username, password });
             
@@ -63,6 +64,19 @@ module.exports = (app, passport) => {
       } catch(err) {
           next(err);
       }
+    });
+
+    router.post('/delete', passport.authenticate('local'), async (req, res, next) => {
+
+        try {
+            const { email, password } = req.body;
+            const response = await AuthServiceInstance.delete({ email, password });
+            
+            res.status(200).send(response);
+            } catch (err) {
+            next(err);
+            }
+
     });
     
   

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Breadcrumb, Layout, Form, Input, Divider } from 'antd';
+import { Breadcrumb, Layout, Form, Input, Divider, Modal, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import CustomButton from '../components/Button';
-import { updateUserDetails } from '../store/auth/auth.actions';
+import { deleteUser, logoutUser } from '../store/auth/auth.actions';
+import { updateUserDetails, fetchUserDetails } from '../store/user/user.actions'
 
 const { Content } = Layout;
 
@@ -20,7 +21,7 @@ const formItemLayout = {
 };
 
 const Account = () => {
-  const { user_id, username, firstname, lastname, email } = useSelector(state => state.user);
+  const { id, username, firstname, lastname, email } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -70,13 +71,74 @@ const Account = () => {
     }, {});
     
     try {
-      await dispatch(updateUserDetails({ user_id, data: payload }));
-      navigate('/'); 
+      await dispatch(updateUserDetails({ id, data: payload }));
+      await dispatch(fetchUserDetails(id)); 
+      message.success('Details updated successfully');
+
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteUser = () => {
+    const formRef = React.createRef();
+
+    Modal.confirm({
+      title: 'Are you sure you want to delete your account?',
+      content: (
+        <Form
+          ref={formRef}
+          name="userDeleteConfirm"
+          initialValues={{ remember: true }}
+        >
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: 'Please input your email!' }]}
+          >
+            <Input placeholder="Email" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+          >
+            <Input.Password placeholder="Password" />
+          </Form.Item>
+        </Form>
+      ),
+      onOk() {
+        return new Promise((resolve, reject) => {
+          formRef.current
+            .validateFields()
+            .then(async (values) => {
+              setIsLoading(true);
+              try {
+                await dispatch(deleteUser(values));
+                message.success('Account successfully deleted');
+                await dispatch(logoutUser()); 
+                navigate('/'); 
+                resolve();
+              } catch (err) {
+                console.error(err);
+                if (err.status === 401) {
+                  message.error('Incorrect username or password');
+                } else {
+                  message.error('An error occurred. Please try again later.');
+                }
+                reject();
+              } finally {
+                setIsLoading(false);
+              }
+              
+            })
+            .catch((info) => {
+              console.error('Validate Failed:', info);
+              reject();
+            });
+        });
+      },
+    });
   };
 
   return (
@@ -139,13 +201,19 @@ const Account = () => {
               addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('email')} />}
             />
           </Form.Item>
-          <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-            <CustomButton variant="contained" color="primary" size="small" type="submit" isLoading={isLoading}>
+          <Form.Item wrapperCol={{ span: 24 }} className="!mb-0">
+             <div className="flex justify-center gap-48 md:px-2">
+          <CustomButton ghost danger type="primary" onClick={handleDeleteUser} loading={isLoading}>
+              Delete Account
+            </CustomButton>
+            <CustomButton ghost htmlType="submit" type="primary" loading={isLoading}>
               Submit
             </CustomButton>
-          </Form.Item>
-          <Divider  style={{   borderColor: 'lightgrey', borderWidth: '1px' }} />
-        </Form>
+
+          </div>
+        </Form.Item>
+        <Divider className="border-lightgrey border-1" />
+      </Form>
       </div>
       <div>
         

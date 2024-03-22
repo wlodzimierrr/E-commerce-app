@@ -46,4 +46,23 @@ module.exports = class AuthService {
         }
     }
     
+    async delete(data) {
+        const { email, password } = data;
+        try {
+            const user = await UserModelInstance.findOneByUsername(email) || await UserModelInstance.findByEmail(email);
+            if (!user) {
+                throw createError(401, 'Incorrect username or password');
+            }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                throw createError(401, 'Incorrect username or password')
+            }
+            
+            return await UserModelInstance.deleteUser(user.id);
+
+        } catch(err) {
+            throw createError(500, err);
+        }
+    }
+    
 }

@@ -120,5 +120,26 @@ module.exports = class UserModel {
             throw new Error(err);
         }
     } 
+
+    async deleteUser(id) {
+        try {
+            const statement = `DELETE
+                               FROM "users"
+                               WHERE id = $1
+                               RETURNING *`;
+            const values = [id];
+
+            const result = await db.query(statement, values)
+
+            if (result.row?.length) {
+                return result.rows[0];
+            }
+
+            return null;
+
+        } catch (err){
+            throw new Error(err);
+        }
+    }
 };
 

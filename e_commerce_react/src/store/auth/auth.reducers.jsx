@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { checkLoginStatus, loginUser, registerUser, logoutUser, updateUserDetails } from "./auth.actions";
+import { checkLoginStatus, loginUser, registerUser, logoutUser, deleteUser } from "./auth.actions";
 
 const initialState = {
     isFetching: false,
@@ -46,19 +46,21 @@ const authSlice = createSlice({
             state.error = error;
         })
 
-        .addCase(updateUserDetails.pending, (state) => {
+
+        .addCase(deleteUser.pending, (state) => {
             state.isLoading = true;
           })
-        .addCase(updateUserDetails.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.userDetails = action.payload; 
-            state.error = null;
-          })
-        .addCase(updateUserDetails.rejected, (state, action) => {
-            state.isLoading = false;
-            state.error = action.payload;
-        });
-    }
+        .addCase(deleteUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false; 
+        state.error = null; 
+        })
+        .addCase(deleteUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload; 
+        })
+    }      
 });
 
 export default authSlice.reducer;

@@ -1,15 +1,14 @@
 import React from 'react';
-import MUIButton from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Button } from 'antd';
 
-function Button(props) {
+function CustomButton(props) {
   const { children, isLoading, ...rest } = props;
 
   return (
-    <MUIButton {...rest} disabled={isLoading}>
-      {isLoading ? <CircularProgress size={24} color="secondary" /> : children}
-    </MUIButton>
+    <Button loading={isLoading} {...rest}>
+      {children}
+    </Button>
   );
 }
 
-export default Button;
+export default CustomButton;

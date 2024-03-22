@@ -4,27 +4,39 @@ const moment = require('moment');
 
 module.exports = class SoldItemModel {
 
-    constructor() {
 
-        this.created_at = data.created_at || moment.utc().toISOString();
-        this.updated_at = moment.utc().toISOString();
-      }
-
-      static async create(data) {
+    static async create(data) {
         try {
-
-            const dataWithTimestamps = { ...data, created_at: moment.utc().toISOString() };
-       
+            const createdAt = moment.utc().toISOString(); 
+            const dataWithTimestamps = { ...data, created_at: createdAt }; 
+            
             const statement = pgp.helpers.insert(dataWithTimestamps, null, 'sold_items') + ' RETURNING *';
             const result = await db.query(statement);
-       
-            if (result.rows?.length) {
-            return result.rows[0];
-            }
-            return null;
-       
-        } catch(err) {
-           throw new Error(err);
+            
+            return result.rows?.[0] || null;
+        } catch (err) {
+            throw new Error(err.message); 
         }
-      }
+    }
+    
+
+    static async findOneByOrderId(order_id) {
+        try{
+        
+            const statement = `SELECT *
+                               FROM sold_items
+                               WHERE order_id = $1`;
+            const values = [order_id];
+            
+            const result = await db.query(statement, values);
+            if (result.rows?.length) {
+                return result.rows
+            }
+          
+            return null;
+        
+        } catch(err) {
+            throw new Error(err);
+        }
+    } 
 }

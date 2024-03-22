@@ -2,9 +2,8 @@ import API from './client'
 
 export const login = async (creaditails) => {
     try {
-
+        
         const response = await API.post('auth/login', creaditails);
-
         const { token } = response.data
 
         localStorage.setItem('token', token);
@@ -35,6 +34,16 @@ export const isLoggedIn = async () => {
 
         return response.data;
     } catch(err) {
+        throw err.response.data;
+    }
+}
+
+export const LoginAndDelete = async (creaditails) => {
+    try {
+        const response = await API.post('auth/delete', creaditails);
+
+        return response.data;
+    } catch (err) {
         throw err.response.data;
     }
 }

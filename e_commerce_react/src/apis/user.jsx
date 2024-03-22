@@ -3,7 +3,8 @@ import API from './client';
 
 export const fetchUser = async (userId) => {
   try {
-    const response = await API.post(`users/${userId}`);
+    
+    const response = await API.get(`users/${userId}`);
 
     return response.data;
 

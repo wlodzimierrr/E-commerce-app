@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchOrder, fetchOrders } from '../../apis/orders';
+import { fetchOrder, fetchOrders, fetchOrdersWithSoldItems } from '../../apis/orders';
 
 export const loadOrder = createAsyncThunk(
   'orders/loadOrder',
@@ -25,6 +25,18 @@ export const loadOrders = createAsyncThunk(
       }
     } catch(err) {
       throw err;
+    }
+  }
+);
+
+export const loadOrdersAndSoldItems = createAsyncThunk(
+  'orders/loadOrdersAndSoldItems',
+  async (_, { rejectWithValue }) => {
+    try {
+      const ordersWithSoldItems = await fetchOrdersWithSoldItems();
+      return ordersWithSoldItems;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
