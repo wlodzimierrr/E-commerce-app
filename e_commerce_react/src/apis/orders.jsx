@@ -21,3 +21,13 @@ export const fetchOrder = async (orderId) => {
     throw err.response.data;
   }
 }
+
+  export const fetchOrdersWithSoldItems = async () => {
+    try {
+      const response = await API.get(`orders/order/with-details`);
+      return response.data; 
+    } catch (err) {
+      console.error("Error fetching orders with detailed sold items:", err);
+      throw err.response.data; 
+    }
+  };
