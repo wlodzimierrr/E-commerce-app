@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Breadcrumb, Layout, Form, Input, Divider } from 'antd';
+import { Breadcrumb, Layout, Form, Input, Divider, Modal, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import CustomButton from '../components/Button';
-import { updateUserDetails } from '../store/auth/auth.actions';
+import { updateUserDetails, deleteUser, logoutUser } from '../store/auth/auth.actions';
 
 const { Content } = Layout;
 
@@ -79,6 +79,65 @@ const Account = () => {
     }
   };
 
+  const handleDeleteUser = () => {
+    const formRef = React.createRef();
+
+    Modal.confirm({
+      title: 'Are you sure you want to delete your account?',
+      content: (
+        <Form
+          ref={formRef}
+          name="userDeleteConfirm"
+          initialValues={{ remember: true }}
+        >
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: 'Please input your email!' }]}
+          >
+            <Input placeholder="Email" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+          >
+            <Input.Password placeholder="Password" />
+          </Form.Item>
+        </Form>
+      ),
+      onOk() {
+        return new Promise((resolve, reject) => {
+          formRef.current
+            .validateFields()
+            .then(async (values) => {
+              setIsLoading(true);
+              try {
+                await dispatch(deleteUser(values));
+                message.success('Account successfully deleted');
+                await dispatch(logoutUser()); 
+                navigate('/'); 
+                resolve();
+              } catch (err) {
+                console.error(err);
+                if (err.status === 401) {
+                  message.error('Incorrect username or password');
+                } else {
+                  message.error('An error occurred. Please try again later.');
+                }
+                reject();
+              } finally {
+                setIsLoading(false);
+              }
+              
+            })
+            .catch((info) => {
+              console.error('Validate Failed:', info);
+              reject();
+            });
+        });
+      },
+    });
+  };
+
   return (
     <Content style={{ padding: '0 48px' }}>
       <Breadcrumb style={{ margin: '16px 0' }}>
@@ -142,6 +201,9 @@ const Account = () => {
           <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
             <CustomButton variant="contained" color="primary" size="small" type="submit" isLoading={isLoading}>
               Submit
+            </CustomButton>
+            <CustomButton variant="contained" color="secondary" size="small" onClick={handleDeleteUser} isLoading={isLoading}>
+              Delete
             </CustomButton>
           </Form.Item>
           <Divider  style={{   borderColor: 'lightgrey', borderWidth: '1px' }} />

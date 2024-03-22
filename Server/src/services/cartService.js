@@ -120,7 +120,6 @@ module.exports = class CartService {
 
         async function addSoldItems(items) {
             for (const item of items.items) {
-                console.log(item)
                 const soldItemData = {
                     order_id: item.order_id,
                     model: item.model, 

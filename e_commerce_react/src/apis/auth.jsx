@@ -38,3 +38,13 @@ export const isLoggedIn = async () => {
         throw err.response.data;
     }
 }
+
+export const LoginAndDelete = async (creaditails) => {
+    try {
+        const response = await API.post('auth/delete', creaditails);
+
+        return response.data;
+    } catch (err) {
+        throw err.response.data;
+    }
+}

@@ -16,13 +16,9 @@ function ProductDetails() {
   const dispatch = useDispatch();
   const products = useSelector(state => state.products);
   const product = products[productId];
-
-  const imageUrls = [
-    "https://surlybikes.com/uploads/bikes/surly-preamble-flat-bar-bike-blue-BK3643-1200x800.jpg",
-    "https://surlybikes.com/uploads/bikes/SUR_Preamble_CompleteBike_Blue_1.jpg",
-  ];
-  const [heroImg, setHeroImg] = useState(imageUrls[0]); 
-
+  const imageUrls = product?.img_link ?? []; 
+  const [heroImg, setHeroImg] = useState(imageUrls.length > 0 ? imageUrls[0] : 'path/to/placeholder.jpg'); 
+  
   useEffect(() => {
     if (!products[productId]) {
       (async function load() {
@@ -32,7 +28,7 @@ function ProductDetails() {
   }, [dispatch, productId, products]);
 
   function handleAddToCart() {
-    if (product && quantity > 0) { // Ensure quantity is positive
+    if (product && quantity > 0) { 
       dispatch(addItem({ product, quantity }))
       .catch(err => console.error("Failed to add item to cart", err));    
     } else {

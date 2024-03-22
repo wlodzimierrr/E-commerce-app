@@ -64,6 +64,20 @@ module.exports = (app, passport) => {
           next(err);
       }
     });
+
+    router.post('/delete', passport.authenticate('local'), async (req, res, next) => {
+
+        try {
+            console.log(req.body)
+            const { email, password } = req.body;
+            const response = await AuthServiceInstance.delete({ email, password });
+            
+            res.status(200).send(response);
+            } catch (err) {
+            next(err);
+            }
+
+    });
     
   
 }
