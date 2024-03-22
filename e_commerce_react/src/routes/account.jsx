@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Breadcrumb, Layout, Form, Input, Divider, Modal, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import CustomButton from '../components/Button';
-import { updateUserDetails, deleteUser, logoutUser } from '../store/auth/auth.actions';
+import { deleteUser, logoutUser } from '../store/auth/auth.actions';
+import { updateUserDetails, fetchUserDetails } from '../store/user/user.actions'
 
 const { Content } = Layout;
 
@@ -20,7 +21,7 @@ const formItemLayout = {
 };
 
 const Account = () => {
-  const { user_id, username, firstname, lastname, email } = useSelector(state => state.user);
+  const { id, username, firstname, lastname, email } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -70,8 +71,10 @@ const Account = () => {
     }, {});
     
     try {
-      await dispatch(updateUserDetails({ user_id, data: payload }));
-      navigate('/'); 
+      await dispatch(updateUserDetails({ id, data: payload }));
+      await dispatch(fetchUserDetails(id)); 
+      message.success('Details updated successfully');
+
     } catch (err) {
       console.error(err);
     } finally {
@@ -198,16 +201,19 @@ const Account = () => {
               addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('email')} />}
             />
           </Form.Item>
-          <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-            <CustomButton variant="contained" color="primary" size="small" type="submit" isLoading={isLoading}>
+          <Form.Item wrapperCol={{ span: 24 }} className="!mb-0">
+             <div className="flex justify-center gap-48 md:px-2">
+          <CustomButton ghost danger type="primary" onClick={handleDeleteUser} loading={isLoading}>
+              Delete Account
+            </CustomButton>
+            <CustomButton ghost htmlType="submit" type="primary" loading={isLoading}>
               Submit
             </CustomButton>
-            <CustomButton variant="contained" color="secondary" size="small" onClick={handleDeleteUser} isLoading={isLoading}>
-              Delete
-            </CustomButton>
-          </Form.Item>
-          <Divider  style={{   borderColor: 'lightgrey', borderWidth: '1px' }} />
-        </Form>
+
+          </div>
+        </Form.Item>
+        <Divider className="border-lightgrey border-1" />
+      </Form>
       </div>
       <div>
         

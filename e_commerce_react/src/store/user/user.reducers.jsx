@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { checkLoginStatus, loginUser, updateUserDetails } from '../auth/auth.actions';
+import { checkLoginStatus, loginUser } from '../auth/auth.actions';
+import { fetchUserDetails, updateUserDetails } from '../user/user.actions';
+
 
 const initialState = {}
 
@@ -17,10 +19,21 @@ const userSlice = createSlice({
         const { user } = action.payload;
         Object.assign(state, user);
       })
-      .addCase(updateUserDetails.fulfilled, (state, action) => {
-        const { user } = action.payload;
-        Object.assign(state, user);
+      .addCase(fetchUserDetails.fulfilled, (state, action) => {
+        Object.assign(state, action.payload);
       })
+      .addCase(updateUserDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+    .addCase(updateUserDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userDetails = action.payload; 
+        state.error = null;
+      })
+    .addCase(updateUserDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+    })
   }
 });
 

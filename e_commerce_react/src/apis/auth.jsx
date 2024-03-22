@@ -2,9 +2,8 @@ import API from './client'
 
 export const login = async (creaditails) => {
     try {
-
+        
         const response = await API.post('auth/login', creaditails);
-
         const { token } = response.data
 
         localStorage.setItem('token', token);
