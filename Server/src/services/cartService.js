@@ -100,9 +100,10 @@ module.exports = class CartService {
         const cartItems = await CartItemModel.find(cartId);
 
       // Generate total price from cart items
-        const total = cartItems.reduce((total, item) => {
-            return total += Number(item.price);
-        }, 0);
+      const total = cartItems.reduce((total, item) => {
+        return total += Number(item.price) * item.quantity;
+    }, 0);
+    
 
       // Generate initial order
         const Order = new OrderModel({ total, user_id });
@@ -118,8 +119,9 @@ module.exports = class CartService {
             description: 'E-commerce App charge'
         })
 
-        async function addSoldItems(items) {
-            for (const item of items.items) {
+        async function addSoldItems(order) {
+            const addResults = []; 
+            for (const item of order.items) { 
                 const soldItemData = {
                     order_id: item.order_id,
                     model: item.model, 
@@ -129,39 +131,55 @@ module.exports = class CartService {
                 };
                 try {
                     const result = await SoldItemModel.create(soldItemData);
-                   return result
+                    addResults.push(result); 
                 } catch (error) {
                     console.error(error);
+                    addResults.push({ error: true, message: error.message });
                 }
             } 
-            
-    }
-        await addSoldItems(Order)
-
+            return addResults; 
+        }
+        try {
+            const results = await addSoldItems(Order);
+            return results
+        } catch (error) {
+            console.error('Failed to initiate sold items addition:', error);
+        }
+        
       // On successful charge to payment method, update order status to COMPLETE
         const order = await Order.update({ status: 'COMPLETE' });
 
         async function updateProductQuantities(orderItems) {
             if (order.status === 'COMPLETE') {
+                const updateResults = []; 
                 for (const item of orderItems) {
                     const id = item.id; 
                     const purchasedQuantity = item.quantity;
                     const currentStockQuantity = item.stock_quantity;
                     const newStockQuantity = currentStockQuantity - purchasedQuantity;
+        
                     if (newStockQuantity < 0) {
-                        console.error(`Cannot reduce stock below zero for product ID ${productId}.`);
+                        console.error(`Cannot reduce stock below zero for product ID ${id}.`);
                         continue; 
                     }
+        
                     try {
-                        const result = await ProductModel.update({id,  stock_quantity: newStockQuantity} );
-                       return result
+                        const result = await ProductModel.update({ id, stock_quantity: newStockQuantity });
+                        updateResults.push(result);
                     } catch (error) {
                         console.error(error);
                     }
                 }
+                return updateResults; 
             }
         }
-        await updateProductQuantities(cartItems)
+        
+        try {
+            const updateResults = await updateProductQuantities(cartItems);
+            console.log('Update results:', updateResults);
+        } catch (error) {
+            console.error('Failed to update product quantities:', error);
+        }
 
         async function deleteCartAndCartItems(orderItems, cartId) {
             if (order.status === 'COMPLETE') {
