@@ -61,7 +61,7 @@ const HeaderComponent = () => {
         {isAuthenticated && (
           <>
             {location.pathname === '/cart' ? (
-              <Button type="primary" ghost icon={<FileTextOutlined />} onClick={() => navigate('/orders')}>Order History</Button>
+              <Button type="primary" ghost icon={<FileTextOutlined />} onClick={() => navigate('/orders')}>Orders</Button>
             ) : (
               <Button type="primary" ghost icon={<ShoppingCartOutlined />} onClick={() => navigate('/cart')}>Cart</Button>
             )}
