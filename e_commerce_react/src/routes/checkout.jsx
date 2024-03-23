@@ -12,25 +12,24 @@ function Checkout() {
   const [stripe, setStripe] = useState(null);
 
   useEffect(() => {
-    stripePromise.then(stripeInstance => {
+    stripePromise.then((stripeInstance) => {
       setStripe(stripeInstance);
     });
   }, []);
 
-
   if (!stripe) {
-    return <div>Loading Stripe...</div>;
+    return <div className="text-center">Loading Stripe...</div>;
   }
 
   return (
-    <Content style={{ padding: '0 48px' }}>
-      <Breadcrumb style={{ margin: '16px 0' }}>
+    <Content className="px-3 lg:px-12 py-4">
+      <Breadcrumb className="my-4">
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Cart</Breadcrumb.Item>
         <Breadcrumb.Item>Checkout</Breadcrumb.Item>
       </Breadcrumb>
       <Elements stripe={stripe}>
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem', backgroundColor: '#f0f2f5' }}>
+        <div className="flex justify-center p-8 bg-gray-100">
           <CheckoutForm />
         </div>
       </Elements>
@@ -39,6 +38,3 @@ function Checkout() {
 }
 
 export default Checkout;
-
-
-

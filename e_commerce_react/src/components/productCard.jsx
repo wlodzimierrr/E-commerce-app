@@ -24,7 +24,7 @@ function ProductCard(props) {
                     />
                 )}
 
-                <p>{data.description}</p>
+                <p>{data.model}</p>
                 <p>{`$${data.price}`}</p>
             </Card>
         </Space>

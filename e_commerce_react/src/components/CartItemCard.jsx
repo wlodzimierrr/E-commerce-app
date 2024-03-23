@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Divider from '@material-ui/core/Divider';
 import { CloseOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux';
 import { Button } from 'antd';
@@ -8,7 +7,6 @@ import { Button } from 'antd';
 import Incrementer from './incrementer';
 
 import { removeItem } from '../store/cart/cart.actions';
-
 
 function CartItemCard(props) {
 
@@ -32,35 +30,31 @@ function CartItemCard(props) {
     await dispatch(removeItem(cartItemId));
   }
 
-
   return (
     <>
-      <div className="cart-item-container">
-        <div className="cart-item-details">
-          <img src="https://surlybikes.com/uploads/bikes/surly-preamble-flat-bar-bike-blue-BK3643-1200x800.jpg" alt="" style={{height: '200px', }} />
-          <p>{name}</p>
-          <p>{price }</p>
-          <p>{quantity}</p>
+      <div className="cart-item-container p-4">
+        <div className="cart-item-details flex gap-4">
+          <img src="https://surlybikes.com/uploads/bikes/surly-preamble-flat-bar-bike-blue-BK3643-1200x800.jpg" alt="" className="h-48 object-cover" />
+          <div className="flex flex-col justify-between">
+            <p className="text-lg font-semibold">{name}</p>
+            <p className="text-sm">{price}</p>
+            <p className="text-sm">{quantity}</p>
+          </div>
         </div>
-        <div className=".cart-item-interact">
-        {location.pathname === '/cart' ? (
-              <></>
-            ) : (
-              <Incrementer
+        <div className="cart-item-interact mt-4">
+          {location.pathname === '/cart' ? null : (
+            <Incrementer
               onDecrement={handleDecrement}
               onIncrement={handleIncrement}
               value={qty}
             />
-              
-            )}
-   
-          <div className="w-full flex justify-start">
-            
-          <Button  className=""type="primary" danger ghost icon={<CloseOutlined />} onClick={remove}>Remove</Button>
+          )}
+          <div className="flex justify-start mt-4">
+            <Button type="primary" danger ghost icon={<CloseOutlined />} onClick={remove}>Remove</Button>
           </div>
         </div>
       </div>
-      <Divider />
+      <hr className="my-4" />
     </>
   );
 }

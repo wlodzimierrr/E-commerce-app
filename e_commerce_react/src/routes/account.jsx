@@ -106,7 +106,9 @@ const Account = () => {
             <Input.Password placeholder="Password" />
           </Form.Item>
         </Form>
-      ),
+          ),
+          okButtonProps: { type: "primary", ghost: true, danger: true },
+          cancelButtonProps: { type: "primary", ghost: true },
       onOk() {
         return new Promise((resolve, reject) => {
           formRef.current
@@ -142,83 +144,69 @@ const Account = () => {
   };
 
   return (
-    <Content style={{ padding: '0 48px' }}>
-      <Breadcrumb style={{ margin: '16px 0' }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>My account</Breadcrumb.Item>
-      </Breadcrumb>
-      <div className="flex justify-center h-full mt-[50px]">
+      <Content className="px-0 md:px-12">
+        <Breadcrumb className="my-4 sm: ml-4">
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
+          <Breadcrumb.Item>My account</Breadcrumb.Item>
+        </Breadcrumb>
+        <div className="flex justify-center h-full mt-12">
         <Form
-          {...formItemLayout}
-          style={{ maxWidth: 600 }}
-          className="w-full max-w-xl"
-          form={form}
-          onFieldsChange={handleFieldChange}
-          onFinish={handleFormSubmit}
-        >
-        <Form.Item
-            label="Username"
-            name="username"
-          >
-            <Input
-              disabled={fieldsDisabled.username}
-              addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('username')} />}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-          >
-            <Input.Password
-              disabled={fieldsDisabled.password}
-              addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('password')} />}
-            />
-          </Form.Item>
-          <Form.Item
-            label="First Name"
-            name="firstname"
-          >
-            <Input
-              disabled={fieldsDisabled.firstname}
-              addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('firstname')} />}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Last Name"
-            name="lastname"
-          >
-            <Input
-              disabled={fieldsDisabled.lastname}
-              addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('lastname')} />}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-          >
-            <Input
-              disabled={fieldsDisabled.email}
-              addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('email')} />}
-            />
-          </Form.Item>
-          <Form.Item wrapperCol={{ span: 24 }} className="!mb-0">
-             <div className="flex justify-center gap-48 md:px-2">
-          <CustomButton ghost danger type="primary" onClick={handleDeleteUser} loading={isLoading}>
-              Delete Account
-            </CustomButton>
-            <CustomButton ghost htmlType="submit" type="primary" loading={isLoading}>
-              Submit
-            </CustomButton>
+      {...formItemLayout}
+      className="max-w-md sm:max-w-xl lg:w-full"
+        form={form}
+        onFieldsChange={handleFieldChange}
+        onFinish={handleFormSubmit}
+      >
+      <Form.Item label="Username" name="username">
+        <Input
+          disabled={fieldsDisabled.username}
+          className="addon-after:cursor-pointer"
+          addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('username')} />}
+        />
+      </Form.Item>
+      <Form.Item label="Password" name="password">
+        <Input.Password
+          disabled={fieldsDisabled.password}
+          className="addon-after:cursor-pointer"
+          addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('password')} />}
+        />
+      </Form.Item>
+      <Form.Item label="First Name" name="firstname">
+        <Input
+          disabled={fieldsDisabled.firstname}
+          className="addon-after:cursor-pointer"
+          addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('firstname')} />}
+        />
+      </Form.Item>
+      <Form.Item label="Last Name" name="lastname">
+        <Input
+          disabled={fieldsDisabled.lastname}
+          className="addon-after:cursor-pointer"
+          addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('lastname')} />}
+        />
+      </Form.Item>
+      <Form.Item label="Email" name="email">
+        <Input
+          disabled={fieldsDisabled.email}
+          className="addon-after:cursor-pointer"
+          addonAfter={<CloseOutlined onClick={() => toggleFieldDisabled('email')} />}
+        />
+      </Form.Item>
+      <Form.Item className="col-span-full mb-0">
+        <div className="flex justify-between  sm:justify-between lg:justify-center gap-3 px-0.5 md:gap-8 lg:gap-48 lg:ml-52">
+          <CustomButton ghost danger type="primary" onClick={handleDeleteUser} loading={isLoading} className="bg-transparent text-primary hover:text-primary-focus focus:ring-0 active:text-primary-press">
+            Delete Account
+          </CustomButton>
+          <CustomButton ghost htmlType="submit" type="primary" loading={isLoading} className="bg-transparent text-primary hover:text-primary-focus focus:ring-0 active:text-primary-press">
+            Submit
+          </CustomButton>
+        </div>
+      </Form.Item>
+      <Divider className="border-gray-300" />
+    </Form>
+  </div>
+</Content>
 
-          </div>
-        </Form.Item>
-        <Divider className="border-lightgrey border-1" />
-      </Form>
-      </div>
-      <div>
-        
-      </div>
-    </Content>
   );
 };
 

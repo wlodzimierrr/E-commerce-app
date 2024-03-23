@@ -2,7 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { checkLoginStatus } from '../auth/auth.actions';
 import { addItem, checkoutCart, loadCart, removeItem, updateItem } from './cart.actions';
 
-const initialState = {};
+const initialState = {
+  items: [],
+};
 
 const cartSlice = createSlice({
   name: 'cart',
