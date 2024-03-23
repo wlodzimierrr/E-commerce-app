@@ -4,12 +4,8 @@ import { Layout } from 'antd';
 const { Footer } = Layout;
 
 const FooterComponent = () => (
-  <Footer
-    style={{
-      textAlign: 'center',
-    }}
-  >
-    Ant Design ©{new Date().getFullYear()} Created by Wlodzimier
+<Footer className="text-center">
+    Silna Marka ©{new Date().getFullYear()} Created by Wlodzimier
   </Footer>
 );
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { Button, Form, Alert } from 'antd'; 
+import { Button, Form, Alert } from 'antd';
 
 import { checkoutCart } from '../store/cart/cart.actions';
 
@@ -10,7 +10,7 @@ function CheckoutForm() {
   const dispatch = useDispatch();
   const elements = useElements();
   const stripe = useStripe();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const cart = useSelector(state => state.cart);
   const [isPaymentLoading, setPaymentLoading] = useState(false);
@@ -50,25 +50,25 @@ function CheckoutForm() {
   };
 
   return (
-    <div style={{ padding: "3rem", width: '100%' }}>
-      <div style={{ maxWidth: "500px", margin: "0 auto" }}>
-        <Form onFinish={onFinish} style={{ display: "block", width: "100%" }}>
+    <div className="p-12 w-full">
+      <div className="max-w-md mx-auto">
+        <Form onFinish={onFinish} className="block w-full">
           {paymentSuccess && (
             <Alert
               message="Success"
               description="Payment was successful. Thank you for your purchase."
               type="success"
               showIcon
-              style={{ marginBottom: 24 }}
+              className="mb-6"
             />
           )}
           <Form.Item>
-            <div className="card" style={{ margin: '0 auto', maxWidth: '500px' }}>
-              <CardElement />
+            <div className="card mx-auto max-w-md">
+              <CardElement options={{classes: {base: "p-4 border rounded shadow-sm"}}} />
             </div>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" ghost htmlType="submit" disabled={isPaymentLoading} block>
+            <Button type="primary" ghost htmlType="submit" disabled={isPaymentLoading} className="w-full">
               {isPaymentLoading ? "Processing..." : "Pay"}
             </Button>
           </Form.Item>
